@@ -11,7 +11,7 @@ def get_file_types_list(path):
     return(file_types)
 
 def move_files_to_dir():
-    
+    return(1)
 
 def test():
     path = "C:/Users/Daniel/Desktop/100CANON"
