@@ -3,10 +3,12 @@ from cmath import log
 from importlib.metadata import files
 import os
 import shutil
+from tokenize import String
 from rule import Rule
+from file import File
+from sorter import Sorter
 
 files_to_move, files_moved = 0, 0
-
 
 def file_moved():
     global files_moved
@@ -39,14 +41,17 @@ def move_files_to_dir(origin_directory, destination_directory, files_extention):
 
     files_list = list(filter(lambda file_name: check_extantion(
         file_name, files_extention), os.listdir(origin_directory)))
+
     if not os.path.exists(destination_directory):
         os.makedirs(destination_directory)
+
     for index, file in enumerate(files_list):
         file_dir = origin_directory
         if file_dir[-1] == '/':
             file_dir += file
         else:
             file_dir = file_dir + '/' + file
+
         shutil.move(file_dir, destination_directory)
         file_moved()
         print(f'done {files_moved} of {files_to_move}')
@@ -112,6 +117,12 @@ def test():
     for rule in rules:
         move_files_to_dir(rule.origin, rule.destination, rule.extantion)
 
+def test2():
+    a = File.create_file_list("C:/Users/Daniel/Desktop/100CANON")
+    path = "C:/Users/Daniel/Desktop/100CANON"
+    rules = Rule.create_default_rules(get_file_types_list(path), path)
+    b = Sorter(rules,a)
+    b.move()
 
 if __name__ == "__main__":
-    test()
+    test2()
