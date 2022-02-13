@@ -120,9 +120,12 @@ def test():
 def test2():
     a = File.create_file_list("C:/Users/Daniel/Desktop/100CANON")
     path = "C:/Users/Daniel/Desktop/100CANON"
-    rules = Rule.create_default_rules(get_file_types_list(path), path)
-    b = Sorter(rules,a)
+    rules = Rule.create_default_rules(Rule.get_file_types_list(path), path)
+    b = Sorter(a,rules,updateStatus)
     b.move()
+
+def updateStatus(files_moved, files_to_move):
+    print(f'done {files_moved} of {files_to_move}')
 
 if __name__ == "__main__":
     test2()
