@@ -1,21 +1,30 @@
 import os
 
 class Rule:
-    def __init__(self, extantion, origin, destination):
+    def __init__(self, extantion, destination):
         self.extantion = extantion
-        self.origin = origin
         self.destination = destination
 
     def create_default_rules(extantion_list, path):
         rule_list = []
         for extantion in extantion_list:
             if path[-1] == '/':
-                new_rule = Rule(extantion, path, path + extantion)
+                new_rule = Rule(extantion, path + extantion)
             else:
-                new_rule = Rule(extantion, path + '/', path + '/' + extantion)
+                new_rule = Rule(extantion, path + '/' + extantion)
             rule_list.append(new_rule)
 
         return rule_list
+
+    def create_rule(extantion, path):
+
+        if path[-1] == '/':
+            _path = path
+        else:
+            _path = path + '/'
+
+        new_rule = Rule(extantion, _path)
+        return new_rule
 
     def get_file_types_list(path):
         '''
