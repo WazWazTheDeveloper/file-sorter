@@ -17,7 +17,6 @@ class Rule:
         return rule_list
 
     def create_rule(extantion, path):
-
         if path[-1] == '/':
             _path = path
         else:
