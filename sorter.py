@@ -42,7 +42,6 @@ class Sorter:
                 if file.extantion == rule.extantion:
                     current_rule = rule
                     
-            print(current_rule.destination)
             if not os.path.exists(current_rule.destination):
                 os.makedirs(current_rule.destination)
 
