@@ -1,4 +1,3 @@
-from operator import truediv
 from tkinter import filedialog
 from tkinter import *
 import os
