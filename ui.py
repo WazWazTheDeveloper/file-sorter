@@ -1,7 +1,6 @@
 from operator import truediv
 from tkinter import filedialog
 from tkinter import *
-import pygetwindow as gw
 import os
 
 from rule import Rule
