@@ -1,3 +1,4 @@
+from cmath import log
 from tkinter import filedialog
 from tkinter import *
 import os
@@ -8,6 +9,11 @@ from sorter import Sorter
 
 def default_update_function(files_moved, files_to_move):
     os.system("cls")
+    dots = int(files_moved / 8) % 4 + 1
+    dot_string = ""
+    for i in range(dots):
+        dot_string += "."
+    print("moving file"+dot_string)
     print(f'done {files_moved} of {files_to_move}, ({round(files_moved/files_to_move*1000)/10}%)')
 
 class Ui:
@@ -19,6 +25,7 @@ class Ui:
         self.update_function = update_function
 
     def start(self):
+        # TODO: add checking to edgecases and invalid inputs
         os.system("cls")
         check_to_continue = True
         while(check_to_continue):
@@ -60,7 +67,7 @@ class Ui:
             print(f'you selected "{destination_folder}"')
             rule = Rule(extension, destination_folder)
             rule_list.append(rule)
-        self.rules=rule_list
+        return rule_list
 
     def check_settings(self):
         os.system("cls")

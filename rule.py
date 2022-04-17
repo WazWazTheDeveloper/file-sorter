@@ -2,8 +2,14 @@ import os
 
 class Rule:
     def __init__(self, extantion, destination):
+        # add / in the end of the path if needed
+        if destination[-1] == '/':
+            _destination = destination
+        else:
+            _destination = destination + '/'
+
         self.extantion = extantion
-        self.destination = destination
+        self.destination = _destination
 
     def create_default_rules(extantion_list, path):
         rule_list = []
@@ -15,15 +21,6 @@ class Rule:
             rule_list.append(new_rule)
 
         return rule_list
-
-    def create_rule(extantion, path):
-        if path[-1] == '/':
-            _path = path
-        else:
-            _path = path + '/'
-
-        new_rule = Rule(extantion, _path)
-        return new_rule
 
     def get_file_types_list(path):
         '''
