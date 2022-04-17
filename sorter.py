@@ -30,6 +30,8 @@ class Sorter:
             if(self.update_function != -1):
                 self.update_function(self.files_moved, self.files_to_move)
 
+        return
+
     def move(self):
         '''
         moves all files with certain extantion to destination directory
@@ -49,7 +51,5 @@ class Sorter:
             self.file_moved()
             if(self.update_function != -1):
                 self.update_function(self.files_moved, self.files_to_move)
-    
-    def file_moved(self):
-        self.files_moved += 1
-    
+
+        return

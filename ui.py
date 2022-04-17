@@ -7,6 +7,8 @@ from rule import Rule
 from file import File
 from sorter import Sorter
 
+import inspect
+
 def default_update_function(files_moved, files_to_move):
     os.system("cls")
     dots = int(files_moved / 8) % 4 + 1
@@ -93,4 +95,3 @@ class Ui:
                 sorter.move()
             case "2":
                 sorter.copy()
-                
