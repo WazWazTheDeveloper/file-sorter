@@ -95,3 +95,4 @@ class Ui:
                 sorter.move()
             case "2":
                 sorter.copy()
+                

@@ -27,7 +27,7 @@ def logo_function():
 if __name__ == "__main__":
     # ui = Ui()
     # ui.start()
-    
+
     origin_folder = VariableArgument("origin folder","C:/Users/Daniel/Desktop/100CANON/JPG" ,1)
     destination_folder = VariableArgument("destination folder","C:/Users/Daniel/Desktop/100CANON/JPG/1",2)
     _rules = Rule.create_default_rules(Rule.get_file_types_list(origin_folder.arg_value), destination_folder.arg_value)
