@@ -1,4 +1,5 @@
 from multiprocessing.connection import wait
+from operator import truediv
 import os
 from time import sleep
 from tkinter import filedialog
@@ -21,47 +22,9 @@ class Ui2:
 
     def main_menu(self):
         os.system("cls")
-        self.print_logo()
-        self.create_menu(self.args,"1")
+        self.create_menu(self.args,"")
 
-        # # draw menu
-        # item_number = 0
-        # for arg in self.args:
-        #     item_number += 1
-        #     if(item_number == arg.arg_place):
-        #         if(isinstance(arg, VariableArgument)):
-        #             print(str(arg.arg_place)+". set "+arg.arg_name)
-        #         elif(isinstance(arg, MenuItem)):
-        #             print(str(arg.menu_place)+". set "+arg.menu_name)
-        #         elif(isinstance(arg, FunctionArgument)):
-        #             print(str(arg.arg_place)+". "+arg.function_name)
-
-        # # wait for keypress and take action accordingly
-        # to_loop = True
-        # while to_loop:
-        #     key_pressed = keyboard.read_key()
-        #     if(key_pressed.isnumeric() and int(key_pressed) <= len(self.args) and int(key_pressed) > 0):
-        #         for arg in self.args:
-        #             if(int(key_pressed) == arg.arg_place):
-        #                 if(isinstance(arg, VariableArgument)):
-        #                     to_loop = False
-        #                     # open sub menu
-        #                     break
-        #                 elif(isinstance(arg, MenuItem)):
-        #                     to_loop = False
-        #                     break
-        #                 elif(isinstance(arg, FunctionArgument)):
-        #                     to_loop = False
-        #                     arg.function()
-        #                     break
-        # print()
-        # print("press any key To continue...")
-        # keyboard.read_key()
-        
-        # redraw menu
-        # self.main_menu()
-
-    def create_menu(self, args,a):
+    def create_menu(self, args,prev_key):
         os.system("cls")
         self.print_logo()
 
@@ -79,33 +42,32 @@ class Ui2:
 
         # wait for keypress and take action accordingly
         to_loop = True
-        sleep(10)
-        print("ready")
         while to_loop:
+            # wait for key to be depressed
+            while(prev_key != "" and keyboard.is_pressed(prev_key)):
+                pass
             key_pressed = keyboard.read_key()
-            print(key_pressed)
             if(key_pressed.isnumeric() and int(key_pressed) <= len(args) and int(key_pressed) > 0):
                 for arg in args:
                     if(int(key_pressed) == arg.arg_place):
                         if(isinstance(arg, VariableArgument)):
                             to_loop = False
-                            print("a")
                             arg.update_function()
                             break
                         elif(isinstance(arg, MenuItem)):
                             to_loop = False
-                            print("b")
-                            self.create_menu(arg.sub_menu_items,"2")
+                            self.create_menu(arg.sub_menu_items,key_pressed)
                             break
                         elif(isinstance(arg, FunctionArgument)):
                             to_loop = False
-                            print("c")
                             arg.function()
                             break
+                    
         print()
-        print(a,"press any key To continue...")
+        print("press any key To continue...")
         keyboard.read_key()
 
+        #draw previous menu
         return
 
     def update_var(self):

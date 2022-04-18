@@ -42,7 +42,7 @@ if __name__ == "__main__":
         "destination folder", "C:/Users/Daniel/Desktop/100CANON/JPG/1", update, arg_place=2)
     _rules = Rule.create_default_rules(Rule.get_file_types_list(
         origin_folder.arg_value), destination_folder.arg_value)
-    rules = VariableArgument("rules", _rules, update, arg_place=3)
+    rules = VariableArgument("rules", _rules, update, arg_place=31)
 
 
     file_list = File.create_file_list(origin_folder.arg_value)
