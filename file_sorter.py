@@ -50,9 +50,8 @@ if __name__ == "__main__":
     copy = FunctionArgument("copy files", sorter.copy, arg_place=4)
     move = FunctionArgument("move files", sorter.copy, arg_place=5)
 
-    o_foler = MenuItem("origin folder",origin_folder, destination_folder, rules,
-             copy, move,arg_place=1)
+    o_foler = MenuItem("rules",rules,arg_place=1)
 
-    ui = Ui2(o_foler, destination_folder, rules,
+    ui = Ui2(origin_folder, destination_folder, rules,
              copy, move, logo_function=logo_function)
     ui.start()
