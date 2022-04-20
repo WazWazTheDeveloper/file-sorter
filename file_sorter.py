@@ -1,7 +1,7 @@
 from rule import Rule
 from file import File
 from sorter import Sorter
-from ui import VariableArgument, FunctionArgument, Ui2, MenuItem
+from ui import VariableArgument, FunctionArgument, Ui, MenuItem
 import os
 
 
@@ -32,10 +32,12 @@ def update():
 
 
 def create_default_rules(_rules, origin_folder, destination_folder):
-    _rules.clear()
-    _rules += Rule.create_default_rules(Rule.get_file_types_list(
-        origin_folder.arg_value), destination_folder.arg_value)
-    return None
+    destination_folder.arg_value = Ui.get_folder()
+    if destination_folder.arg_value is not "":
+        _rules.clear()
+        _rules += Rule.create_default_rules(Rule.get_file_types_list(
+            origin_folder.arg_value), destination_folder.arg_value)
+        return None
 
 
 def add_rules_to_menu(rules_custom, origin_folder,_rules,file_list):
@@ -51,12 +53,12 @@ def add_rules_to_menu(rules_custom, origin_folder,_rules,file_list):
 
     a = 0
     for rule in _rules:
-        menuItem = VariableArgument(f'set {rule.extantion} path', rule, lambda: update_rule_destenation(rule),show_value=lambda:(rule.destination+ " " +rule.extantion), arg_place=(a+1), to_show=True)
+        menuItem = VariableArgument(f'set {rule.extantion} path', rule, (lambda rule=rule : update_rule_destenation(rule)),show_value=lambda rule=rule :(rule.destination+ " " +rule.extantion), arg_place=(a+1), to_show=True)
         rules_custom.add_menu_item(menuItem)
         a+=1
 
 def update_rule_destenation(rule):
-    rule.destination = Ui2.get_folder()
+    rule.destination = Ui.get_folder()
     return None
 
 if __name__ == "__main__":
@@ -64,9 +66,9 @@ if __name__ == "__main__":
     file_list = []
     sorter = Sorter(file_list, _rules, default_update_function)
     origin_folder = VariableArgument(
-        "origin folder", "", Ui2.get_folder, post_update_function= lambda: add_rules_to_menu(rules_custom, origin_folder,_rules,file_list), arg_place=1)
+        "origin folder", "", Ui.get_folder, post_update_function= lambda: add_rules_to_menu(rules_custom, origin_folder,_rules,file_list), arg_place=1)
     destination_folder = VariableArgument(
-        "destination folder", "C:/Users/Daniel/Desktop/100CANON/1",  Ui2.get_folder, arg_place=2)
+        "destination folder", "",  Ui.get_folder, arg_place=2)
     rules_custom = MenuItem("create custom rules", arg_place=2)
     rules_default = VariableArgument("set defalut rules", _rules, lambda: create_default_rules(
         _rules, origin_folder, destination_folder), arg_place=1, to_show=False)
@@ -78,7 +80,7 @@ if __name__ == "__main__":
     rules_menu.add_menu_item(rules_default)
     rules_menu.add_menu_item(rules_custom)
 
-    ui = Ui2(logo_function=logo_function)
+    ui = Ui(logo_function=logo_function)
     ui.add_arg(origin_folder)
     ui.add_arg(rules_menu)
     ui.add_arg(copy)

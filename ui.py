@@ -1,14 +1,11 @@
 from multiprocessing.connection import wait
 from operator import truediv
 import os
-from time import sleep
+import keyboard
 from tkinter import filedialog
 from tkinter import *
-from traceback import print_tb
-import keyboard
 
-
-class Ui2:
+class Ui:
     def __init__(self, logo_function=lambda *args: None):
         self.root = Tk()
         self.root.withdraw()
@@ -29,9 +26,9 @@ class Ui2:
 
     def main_menu(self):
         os.system("cls")
-        self.create_menu(self.args, "")
+        self.create_menu(self.args, "",show_back_button=False)
 
-    def create_menu(self, args, prev_key):
+    def create_menu(self, args, prev_key, show_back_button=True):
         os.system("cls")
         self.print_logo()
 
@@ -53,7 +50,10 @@ class Ui2:
                     print(str(arg.arg_place)+". "+arg.menu_name)
                 elif(isinstance(arg, FunctionArgument)):
                     print(str(arg.arg_place)+". "+arg.function_name)
-        print(f'{item_number+1}. go back to previous menu')
+        
+        # show back button
+        if(show_back_button):
+            print(f'{item_number+1}. go back to previous menu')
 
         # wait for keypress and take action accordingly
         to_loop = True
@@ -62,7 +62,9 @@ class Ui2:
             self.wait_for_key_to_depress(prev_key)
 
             key_pressed = keyboard.read_key()
-            if(key_pressed.isnumeric() and int(key_pressed) == item_number+1):
+
+            # back button
+            if(show_back_button and key_pressed.isnumeric() and int(key_pressed) == item_number+1):
                 self.wait_for_key_to_depress(key_pressed)
                 return
 
@@ -76,14 +78,14 @@ class Ui2:
                                 arg.arg_value = newval
                             arg.post_update_function()
                             self.wait_for_key_to_depress(key_pressed)
-                            self.create_menu(args, key_pressed)
+                            self.create_menu(args, key_pressed,show_back_button)
                             # return
                             break
                         elif(isinstance(arg, MenuItem)):
                             to_loop = False
                             self.wait_for_key_to_depress(key_pressed)
                             self.create_menu(arg.sub_menu_items, key_pressed)
-                            self.create_menu(args, key_pressed)
+                            self.create_menu(args, key_pressed, show_back_button)
                             break
                         elif(isinstance(arg, FunctionArgument)):
                             to_loop = False
