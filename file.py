@@ -21,5 +21,3 @@ class File:
                 file_list.append(File(file_name, file_extantion, file_path))
 
         return file_list
-
-
