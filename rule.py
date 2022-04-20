@@ -1,7 +1,7 @@
 import os
 
 class Rule:
-    def __init__(self, extantion, destination):
+    def __init__(self, extantion, destination, to_use = True):
         # add / in the end of the path if needed
         if destination[-1] == '/':
             _destination = destination
@@ -10,6 +10,7 @@ class Rule:
 
         self.extantion = extantion
         self.destination = _destination
+        self.to_use = to_use
 
     def create_default_rules(extantion_list, path):
         rule_list = []

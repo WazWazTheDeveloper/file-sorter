@@ -1,98 +1,152 @@
-from cmath import log
+from multiprocessing.connection import wait
+from operator import truediv
+import os
+from time import sleep
 from tkinter import filedialog
 from tkinter import *
-import os
+from traceback import print_tb
+import keyboard
 
-from rule import Rule
-from file import File
-from sorter import Sorter
 
-import inspect
-
-def default_update_function(files_moved, files_to_move):
-    os.system("cls")
-    dots = int(files_moved / 8) % 4 + 1
-    dot_string = ""
-    for i in range(dots):
-        dot_string += "."
-    print("moving file"+dot_string)
-    print(f'done {files_moved} of {files_to_move}, ({round(files_moved/files_to_move*1000)/10}%)')
-
-class Ui:
-    def __init__(self, update_function=default_update_function):
+class Ui2:
+    def __init__(self, logo_function=lambda *args: None):
         self.root = Tk()
         self.root.withdraw()
-        self.origin_folder = ""
-        self.rules = []
-        self.update_function = update_function
+        self.args = []
+        self.arg_count = 0
+        self.logo_function = logo_function
 
+    def wait_for_key_to_depress(self, key):
+        # wait for key to be depressed
+        while(key != "" and keyboard.is_pressed(key)):
+            pass
+        
     def start(self):
-        # TODO: add checking to edgecases and invalid inputs
-        os.system("cls")
-        check_to_continue = True
-        while(check_to_continue):
-            while(self.origin_folder == ""):
-                self.select_origin_folder()
-            self.select_rule_type()
-            check_to_continue = not self.check_settings()
-        self.sort()
+        self.main_menu()
 
-    def select_origin_folder(self):
+    def print_logo(self):
+        self.logo_function()
+
+    def main_menu(self):
         os.system("cls")
-        print("please select origin folder")
-        self.origin_folder = filedialog.askdirectory()
-    
-    def select_destination_folder(self):
-        print("please select destination folder")
+        self.create_menu(self.args, "")
+
+    def create_menu(self, args, prev_key):
+        os.system("cls")
+        self.print_logo()
+
+        # draw menu
+        item_number = 0
+        for arg in args:
+            item_number += 1
+            if(item_number == arg.arg_place):
+                if(isinstance(arg, VariableArgument)):
+                    value = ""
+                    if(arg.to_show):
+                        if(arg.show_value() != True):
+                            value = f'({arg.show_value()})'
+                        else:
+                            value = f'({arg.arg_value})'
+
+                    print(f'{str(arg.arg_place)}. {arg.arg_name} {value}')
+                elif(isinstance(arg, MenuItem)):
+                    print(str(arg.arg_place)+". "+arg.menu_name)
+                elif(isinstance(arg, FunctionArgument)):
+                    print(str(arg.arg_place)+". "+arg.function_name)
+        print(f'{item_number+1}. go back to previous menu')
+
+        # wait for keypress and take action accordingly
+        to_loop = True
+        while to_loop:
+            # wait for key to be depressed
+            self.wait_for_key_to_depress(prev_key)
+
+            key_pressed = keyboard.read_key()
+            if(key_pressed.isnumeric() and int(key_pressed) == item_number+1):
+                self.wait_for_key_to_depress(key_pressed)
+                return
+
+            elif(key_pressed.isnumeric() and int(key_pressed) <= len(args) and int(key_pressed) > 0):
+                for arg in args:
+                    if(int(key_pressed) == arg.arg_place):
+                        if(isinstance(arg, VariableArgument)):
+                            to_loop = False
+                            newval = arg.update_function()
+                            if newval is not None:
+                                arg.arg_value = newval
+                            arg.post_update_function()
+                            self.wait_for_key_to_depress(key_pressed)
+                            self.create_menu(args, key_pressed)
+                            # return
+                            break
+                        elif(isinstance(arg, MenuItem)):
+                            to_loop = False
+                            self.wait_for_key_to_depress(key_pressed)
+                            self.create_menu(arg.sub_menu_items, key_pressed)
+                            self.create_menu(args, key_pressed)
+                            break
+                        elif(isinstance(arg, FunctionArgument)):
+                            to_loop = False
+                            arg.function()
+                            break
+
+        return
+
+    def add_arg(self, arg):
+        if(isinstance(arg, VariableArgument)):
+            pass
+        elif(isinstance(arg, MenuItem)):
+            pass
+        elif(isinstance(arg, FunctionArgument)):
+            pass
+
+        self.arg_count += 1
+        self.args.append(arg)
+        return self
+
+    def get_folder():
         return filedialog.askdirectory()
 
-    def select_rule_type(self):
-        rule_type = -1
-        os.system("cls")
-        print("please select what action you want to do:")
-        print("1: use defalut rules for sorting")
-        print("2. use custom rule for sorting")
-        rule_type = input("you action:")
-        match rule_type:
-            case "1":
-                destination_folder = self.select_destination_folder()
-                self.rules = Rule.create_default_rules(Rule.get_file_types_list(self.origin_folder), destination_folder)
-            case "2":
-                self.rules = self.create_custom_rules()
 
-    def create_custom_rules(self):
-        rule_list = []
-        extensions = Rule.get_file_types_list(self.origin_folder)
-        for extension in extensions:
-            print(f'please select destination folder for files with the extention ".{extension}"')
-            destination_folder = filedialog.askdirectory()
-            print(f'you selected "{destination_folder}"')
-            rule = Rule(extension, destination_folder)
-            rule_list.append(rule)
-        return rule_list
+class MenuItem:
+    def __init__(self, menu_name, *sub_menu_items, arg_place=-1):
+        self.menu_name = menu_name
+        self.sub_menu_items = sub_menu_items
+        self.arg_count = len(sub_menu_items)
+        self.arg_place = arg_place
 
-    def check_settings(self):
-        os.system("cls")
-        print("you want to move file from: "+self.origin_folder)
-        for rule in self.rules:
-            print(f'all file with the extantion "{rule.extantion}" will move to: "{rule.destination}"')
-        print()
-        print("are you sure you want to continue?")
-        action = input("Y/N:")
-        if (action == "Y" or action =="y"):
-            return True
-        return False
+    def __init__(self, menu_name, arg_place=-1):
+        self.menu_name = menu_name
+        self.sub_menu_items = []
+        self.arg_count = 0
+        self.arg_place = arg_place
 
-    def sort(self):
-        file_list = File.create_file_list(self.origin_folder)
-        sorter = Sorter(file_list,self.rules,self.update_function)
-        print("please select what action you want to do:")
-        print("1: move all files to new location")
-        print("2: copy all files to new location")
-        action = input()
-        match action :
-            case "1":
-                sorter.move()
-            case "2":
-                sorter.copy()
-                
+    def add_menu_item(self, arg):
+        self.arg_count += 1
+        self.sub_menu_items.append(arg)
+
+        return self
+
+    def clear(self):
+        self.arg_count = 0
+        self.sub_menu_items.clear()
+
+        return self
+
+
+class VariableArgument:
+    def __init__(self, arg_name, arg_value, update_function, post_update_function = lambda *args: None,show_value = lambda: True, arg_place=-1 , to_show=True):
+        self.arg_name = arg_name
+        self.arg_value = arg_value
+        self.arg_place = arg_place
+        self.update_function = update_function
+        self.post_update_function = post_update_function
+        self.show_value = show_value
+        self.to_show = to_show
+
+
+class FunctionArgument:
+    def __init__(self, function_name, function, arg_place=-1):
+        self.function_name = function_name
+        self.function = function
+        self.arg_place = arg_place
