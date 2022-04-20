@@ -22,9 +22,9 @@ def logo_function():
     print(f' |    __)  |  |  | _/ __ \   ______  \_____  \ /  _ \_  __ \   __\/ __ \_  __ \\')
     print(f' \___  /   |__|____/\___  >         /_______  /\____/|__|   |__|  \___  >__|   ')
     print(f'     \/                 \/                  \/                        \/       ')
-    print()
-    print()
-    print()
+    print(f'By WazWazTheDeveloper')
+    print(f'')
+    print(f'')
 
 
 def update():
