@@ -53,7 +53,7 @@ def add_rules_to_menu(rules_custom, origin_folder,_rules,file_list):
 
     a = 0
     for rule in _rules:
-        menuItem = VariableArgument(f'set {rule.extantion} path', rule, (lambda rule=rule : update_rule_destenation(rule)),show_value=lambda rule=rule :(rule.destination+ " " +rule.extantion), arg_place=(a+1), to_show=True)
+        menuItem = VariableArgument(f'set {rule.extantion} path', rule, (lambda rule=rule : update_rule_destenation(rule)),show_value=lambda rule=rule :(rule.destination), arg_place=(a+1), to_show=True)
         rules_custom.add_menu_item(menuItem)
         a+=1
 
